@@ -26,13 +26,32 @@ CREATE TABLE answers(
   answer text NOT NULL
 );
 
-CREATE TABLE user (
+CREATE TABLE user(
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   username varchar(60) NOT NULL,
-  password varchar(12) NOT NULL,
-  examAccess int,
-  FOREIGN KEY(examAccess) REFERENCES exam(id),
+  password varchar(20) NOT NULL,
   isAdmin BOOLEAN NOT NULL DEFAULT false
 );
 
+CREATE TABLE exam_access(
+  id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id int NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES user(id),
+  exam_id int NOT NULL,
+  FOREIGN KEY (exam_id) REFERENCES exam(id)
+);
+
+CREATE TABLE user_answers(
+  id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id int NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES user(id),
+  exam_id int NOT NULL,
+  FOREIGN KEY (exam_id) REFERENCES exam(id),
+  questions_id int NOT NULL,
+  FOREIGN KEY (questions_id) REFERENCES questions(id),
+  answer_id int NOT NULL,
+  FOREIGN KEY (answer_id) REFERENCES answers(id)
+);
+
 INSERT INTO user(username, password, isAdmin) VALUES ('admin', 'cbt-admin@1321', true);
+INSERT INTO user(username, password, isAdmin) VALUES ('siswa1', 'siswa123', false);

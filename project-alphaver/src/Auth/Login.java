@@ -97,9 +97,9 @@ public class Login extends javax.swing.JFrame {
         buttonLogin.setText("Done");
         buttonLogin.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         buttonLogin.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        buttonLogin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonLoginActionPerformed(evt);
+        buttonLogin.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                buttonLoginMouseClicked(evt);
             }
         });
 
@@ -173,7 +173,7 @@ public class Login extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void buttonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLoginActionPerformed
+    private void buttonLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonLoginMouseClicked
         String username = textField_Username.getText();
         String password = jPasswordField1.getText();
         
@@ -209,7 +209,7 @@ public class Login extends javax.swing.JFrame {
         } catch (HeadlessException | SQLException e) {
            JOptionPane.showMessageDialog(this, e.getMessage());
         }
-    }//GEN-LAST:event_buttonLoginActionPerformed
+    }//GEN-LAST:event_buttonLoginMouseClicked
 
     /**
      * @param args the command line arguments
