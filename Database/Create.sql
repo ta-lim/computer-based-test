@@ -4,6 +4,13 @@ DROP DATABASE cbt_pbo;
 CREATE DATABASE cbt_pbo;
 USE cbt_pbo;
 
+CREATE TABLE user(
+  id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  username varchar(60) NOT NULL,
+  password varchar(20) NOT NULL,
+  isAdmin BOOLEAN NOT NULL DEFAULT false
+);
+
 CREATE TABLE exam(
   id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   title varchar(60) NOT NULL,
@@ -23,14 +30,8 @@ CREATE TABLE answers(
   questions_id int NOT NULL,
   FOREIGN KEY (questions_id) REFERENCES questions(id),
   choice varchar(1) NOT NULL,
-  answer text NOT NULL
-);
-
-CREATE TABLE user(
-  id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  username varchar(60) NOT NULL,
-  password varchar(20) NOT NULL,
-  isAdmin BOOLEAN NOT NULL DEFAULT false
+  answer text NOT NULL,
+  isRight boolean NOT NULL
 );
 
 CREATE TABLE exam_access(
@@ -55,3 +56,5 @@ CREATE TABLE user_answers(
 
 INSERT INTO user(username, password, isAdmin) VALUES ('admin', 'cbt-admin@1321', true);
 INSERT INTO user(username, password, isAdmin) VALUES ('siswa1', 'siswa123', false);
+
+INSERT INTO exam(title, isOpen) VALUES('UTS Matematika 3A', false);

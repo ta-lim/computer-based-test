@@ -51,6 +51,7 @@ public class ManageExam extends javax.swing.JFrame {
         cancelButton = new javax.swing.JButton();
         warnTextLabel = new javax.swing.JLabel();
         editSoalButton = new javax.swing.JButton();
+        viewGradesBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(227, 246, 242));
@@ -141,7 +142,19 @@ public class ManageExam extends javax.swing.JFrame {
         warnTextLabel.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         warnTextLabel.setForeground(new java.awt.Color(255, 22, 44));
 
-        editSoalButton.setText("Edit Soal");
+        editSoalButton.setText("Manage Question");
+        editSoalButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                editSoalButtonMouseClicked(evt);
+            }
+        });
+
+        viewGradesBtn.setText("View Grades");
+        viewGradesBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                viewGradesBtnMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -164,8 +177,10 @@ public class ManageExam extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(editSoalButton)
                                 .addGap(18, 18, 18)
+                                .addComponent(viewGradesBtn)
+                                .addGap(18, 18, 18)
                                 .addComponent(cancelButton)
-                                .addGap(320, 320, 320))
+                                .addGap(296, 296, 296))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(warnTextLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -201,7 +216,8 @@ public class ManageExam extends javax.swing.JFrame {
                             .addComponent(updateButton)
                             .addComponent(deleteButton)
                             .addComponent(cancelButton)
-                            .addComponent(editSoalButton))
+                            .addComponent(editSoalButton)
+                            .addComponent(viewGradesBtn))
                         .addGap(42, 42, 42)
                         .addComponent(warnTextLabel))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -214,7 +230,7 @@ public class ManageExam extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1200, Short.MAX_VALUE)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -249,7 +265,8 @@ public class ManageExam extends javax.swing.JFrame {
         this.updateButton.setVisible(true);
         this.deleteButton.setVisible(true);
         this.cancelButton.setVisible(true);
-       this.editSoalButton.setVisible(true);
+        this.editSoalButton.setVisible(true);
+        this.viewGradesBtn.setVisible(true);
         this.addButton.setVisible(false);
     }//GEN-LAST:event_tableExamMouseClicked
 
@@ -306,12 +323,24 @@ public class ManageExam extends javax.swing.JFrame {
 
       this.initAlgos();
     }//GEN-LAST:event_deleteButtonMouseClicked
+
+    private void editSoalButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editSoalButtonMouseClicked
+        ManageQuestions mq = new ManageQuestions(this.manage_id);
+        mq.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_editSoalButtonMouseClicked
+
+    private void viewGradesBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_viewGradesBtnMouseClicked
+        new ViewGrades(this.manage_id).setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_viewGradesBtnMouseClicked
     
     private void initAlgos() {
        this.updateButton.setVisible(false);
        this.deleteButton.setVisible(false);
        this.cancelButton.setVisible(false);
        this.editSoalButton.setVisible(false);
+       this.viewGradesBtn.setVisible(false);
        this.addButton.setVisible(true);
        this.titleTextField.setText("");
        this.isOpenCheckBox.setSelected(false);
@@ -400,6 +429,7 @@ public class ManageExam extends javax.swing.JFrame {
     private javax.swing.JTable tableExam;
     private javax.swing.JTextField titleTextField;
     private javax.swing.JButton updateButton;
+    private javax.swing.JButton viewGradesBtn;
     private javax.swing.JLabel warnTextLabel;
     // End of variables declaration//GEN-END:variables
 }

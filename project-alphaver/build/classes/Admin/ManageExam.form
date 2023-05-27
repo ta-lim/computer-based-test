@@ -27,7 +27,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jLabel1" pref="1200" max="32767" attributes="0"/>
+          <Component id="jLabel1" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
@@ -88,8 +88,10 @@
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="editSoalButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="viewGradesBtn" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="320" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="296" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="1" attributes="0">
@@ -139,6 +141,7 @@
                               <Component id="deleteButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="editSoalButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="viewGradesBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
                           <Component id="warnTextLabel" min="-2" max="-2" attributes="0"/>
@@ -276,8 +279,19 @@
         </Component>
         <Component class="javax.swing.JButton" name="editSoalButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Edit Soal"/>
+            <Property name="text" type="java.lang.String" value="Manage Question"/>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="editSoalButtonMouseClicked"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="viewGradesBtn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="View Grades"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="viewGradesBtnMouseClicked"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
