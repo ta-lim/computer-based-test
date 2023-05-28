@@ -4,23 +4,23 @@
  */
 package Admin;
 
-import Models.DBConnection;
 import java.awt.HeadlessException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author mikai
+ * @author Aditya Syawal, Muhamad Talim, Mikail Asada, Rafi Fajrul
  */
 public class ViewGrades extends javax.swing.JFrame {
+    private java.sql.Connection connectionDB;
     private int examId = -1;
     /**
      * Creates new form ViewGrades
      */
-    public ViewGrades(int examId) {
+    public ViewGrades(int examId, java.sql.Connection connectionDB) {
+        this.connectionDB = connectionDB;
         this.examId = examId;
         initComponents();
         this.showData();
@@ -95,15 +95,14 @@ public class ViewGrades extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void backBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backBtnMouseClicked
-        new ManageExam().setVisible(true);
+        new ManageExam(this.connectionDB).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_backBtnMouseClicked
     
     private void showData() {
         try {
             String query = "SELECT exam_id, exam_title, user_id, username, total_poin, RANK() OVER (ORDER BY total_poin DESC) AS rank_position FROM (SELECT e.id AS exam_id, e.title AS exam_title, u.id AS user_id, u.username, SUM(CASE WHEN a.isRight = true THEN q.poin ELSE 0 END) AS total_poin FROM user_answers ua JOIN user u ON ua.user_id = u.id JOIN exam e ON ua.exam_id = e.id JOIN questions q ON ua.questions_id = q.id JOIN answers a ON ua.answer_id = a.id WHERE e.id = " + this.examId + " GROUP BY ua.user_id, ua.exam_id) AS subquery ORDER BY total_poin DESC;";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.Statement statement = Vconn.createStatement();
+            java.sql.Statement statement = this.connectionDB.createStatement();
             java.sql.ResultSet res = statement.executeQuery(query);
             
             DefaultTableModel model = new DefaultTableModel() {
@@ -134,37 +133,37 @@ public class ViewGrades extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ViewGrades.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ViewGrades.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ViewGrades.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ViewGrades.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ViewGrades(1).setVisible(true);
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(ViewGrades.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(ViewGrades.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(ViewGrades.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(ViewGrades.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new ViewGrades(1).setVisible(true);
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backBtn;

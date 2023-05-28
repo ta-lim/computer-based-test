@@ -1,24 +1,32 @@
 package Admin;
 
-
 import Admin.DashboardAdmin;
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author mikai
+ * @author Aditya Syawal, Muhamad Talim, Mikail Asada, Rafi Fajrul
  */
 public class ManageUser extends javax.swing.JFrame {
+
+//        private Connection connection;
+//        DefaultTableModel tableModel;
+    private java.sql.Connection connectionDB;
+    private Integer userID;
 
     /**
      * Creates new form ManageUser
      */
-    public ManageUser() {
-        initComponents();
+    public ManageUser(java.sql.Connection connectionDB) {
+        this.connectionDB = connectionDB;
+        this.initComponents();
+        this.initAlgos();
+
     }
 
     /**
@@ -31,23 +39,26 @@ public class ManageUser extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        userTable = new javax.swing.JTable();
+        isAdminCheckBox = new javax.swing.JCheckBox();
+        passField = new javax.swing.JTextField();
+        userField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        jToggleButton1 = new javax.swing.JToggleButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        updateButton = new javax.swing.JButton();
+        clearButton = new javax.swing.JButton();
+        addButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
+        manageExamButton = new javax.swing.JButton();
+        backButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        userTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                { new Integer(1), "admin", "cbt-admin",  new Boolean(true)},
-                { new Integer(2), "siswa1", "siswa123", null}
+
             },
             new String [] {
                 "id", "username", "password", "isAdmin"
@@ -56,33 +67,78 @@ public class ManageUser extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
-        jScrollPane1.setViewportView(jTable1);
-
-        jLabel1.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        jLabel1.setText("Manage User");
-
-        jToggleButton1.setText("Back");
-        jToggleButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        userTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jToggleButton1MouseClicked(evt);
+                userTableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(userTable);
+
+        jLabel1.setText("Username");
+
+        jLabel2.setText("Password");
+
+        jLabel3.setText("Admin");
+
+        updateButton.setText("Update");
+        updateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateButtonActionPerformed(evt);
             }
         });
 
-        jLabel2.setText("Username");
+        clearButton.setText("Clear");
+        clearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearButtonActionPerformed(evt);
+            }
+        });
 
-        jLabel3.setText("Password");
+        addButton.setText("Add");
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
+            }
+        });
 
-        jLabel4.setText("isAdmin");
+        deleteButton.setText("Delete");
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
+            }
+        });
 
-        jButton1.setText("Add");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+        cancelButton.setText("Cancel");
+        cancelButton.setFocusCycleRoot(true);
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
+        manageExamButton.setText("Manage Exam");
+        manageExamButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                manageExamButtonActionPerformed(evt);
+            }
+        });
+
+        backButton.setText("Back");
+        backButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backButtonActionPerformed(evt);
             }
         });
 
@@ -91,125 +147,378 @@ public class ManageUser extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(45, 45, 45)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel1)
+                        .addComponent(jLabel2)
+                        .addComponent(jLabel3))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 590, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(backButton))
+                        .addGap(3, 3, 3)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
+                        .addGap(52, 52, 52)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(isAdminCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(passField, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(manageExamButton)
+                            .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(23, 23, 23)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
-                                    .addComponent(jTextField2)
-                                    .addComponent(jCheckBox1)))
-                            .addComponent(jButton1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(271, 271, 271))
+                                .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(addButton))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(44, 44, 44)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 418, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jLabel1)
+                .addGap(45, 45, 45)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(userField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(passField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
-                        .addComponent(jToggleButton1)
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(49, 49, 49)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addGap(14, 14, 14)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jCheckBox1))
-                        .addGap(37, 37, 37)
-                        .addComponent(jButton1)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(isAdminCheckBox)
+                            .addComponent(jLabel3))))
+                .addGap(18, 18, 18)
+                .addComponent(manageExamButton)
+                .addGap(66, 66, 66)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(updateButton)
+                    .addComponent(deleteButton)
+                    .addComponent(cancelButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addButton)
+                    .addComponent(clearButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(backButton))
+                .addGap(301, 301, 301))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        updateButton.setVisible(false);
+        deleteButton.setVisible(false);
+        cancelButton.setVisible(false);
+        manageExamButton.setVisible(false);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jToggleButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MouseClicked
-        DashboardAdmin da = new DashboardAdmin();
-        da.setVisible(true);
+    private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
+        updateUser();
+    }//GEN-LAST:event_updateButtonActionPerformed
+
+    private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
+        clearForm();
+    }//GEN-LAST:event_clearButtonActionPerformed
+
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        deleteUser();
+    }//GEN-LAST:event_deleteButtonActionPerformed
+
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        String username = userField.getText();
+        String password = passField.getText();
+        if (isEmpty(username) || isEmpty(password)) {
+            JOptionPane.showMessageDialog(this, "Username and Password cannot be empty !");
+            return;
+        } else {
+            createUser();
+        }
+    }//GEN-LAST:event_addButtonActionPerformed
+
+    private void userTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_userTableMouseClicked
+        // TODO add your handling code here:    
+
+//        this.cancelButton.setVisible(true);
+//       this.editSoalButton.setVisible(true);
+//        this.addButton.setVisible(false);
+        int selectedRow = userTable.getSelectedRow();
+        if (selectedRow != -1) {
+            userID = (int) userTable.getValueAt(selectedRow, 0);
+            String username = (String) userTable.getValueAt(selectedRow, 1);
+            String password = (String) userTable.getValueAt(selectedRow, 2);
+            boolean isAdmin = (boolean) userTable.getValueAt(selectedRow, 3);
+
+            this.userField.setText(username);
+            this.passField.setText(password);
+            this.isAdminCheckBox.setSelected(isAdmin);
+
+            this.backButton.setVisible(false);
+            this.clearButton.setVisible(false);
+            this.addButton.setVisible(false);
+            this.cancelButton.setVisible(true);
+            this.manageExamButton.setVisible(true);
+            this.updateButton.setVisible(true);
+            this.deleteButton.setVisible(true);
+
+        }
+    }//GEN-LAST:event_userTableMouseClicked
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        clearForm();
+        userTable.clearSelection();
+        this.initAlgos();
+
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void manageExamButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manageExamButtonActionPerformed
+        new ManageAccessExam(String.valueOf(this.userID), userField.getText(), this.connectionDB).setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_jToggleButton1MouseClicked
+    }//GEN-LAST:event_manageExamButtonActionPerformed
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-        String username = jTextField1.getText();
-        String password = jTextField2.getText();
-        boolean isAdmin = jCheckBox1.isSelected();
-    }//GEN-LAST:event_jButton1MouseClicked
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+        DashboardAdmin dashboardAdmin = new DashboardAdmin(this.connectionDB);
+        dashboardAdmin.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_backButtonActionPerformed
 
+    private void createUser() {
+        String username = userField.getText();
+        String password = passField.getText();
+        boolean isAdmin = isAdminCheckBox.isSelected();
+
+        try {
+            // Check if the username already exists
+            if (isUsernameExists(username)) {
+                JOptionPane.showMessageDialog(this, "Username already exists!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String sql = "INSERT INTO user (username, password, isAdmin) VALUES (?, ?, ?)";
+            PreparedStatement statement = this.connectionDB.prepareStatement(sql);
+            statement.setString(1, username);
+            statement.setString(2, password);
+            statement.setBoolean(3, isAdmin);
+            statement.executeUpdate();
+            statement.close();
+            JOptionPane.showMessageDialog(this, "User added successfully!");
+            this.initAlgos();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error adding user: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void updateUser() {
+        int selectedRow = userTable.getSelectedRow();
+        if (selectedRow != -1) {
+            userID = (int) userTable.getValueAt(selectedRow, 0);
+
+            try {
+                String sql = "UPDATE user SET username = ?, password = ?, isAdmin = ? WHERE id = ?";
+                PreparedStatement statement = this.connectionDB.prepareStatement(sql);
+                statement.setString(1, getUsername());
+                statement.setString(2, getPassword());
+                statement.setBoolean(3, getIsAdmin());
+                statement.setInt(4, userID);
+                int rowsAffected = statement.executeUpdate();
+                statement.close();
+                if (rowsAffected > 0) {
+                    JOptionPane.showMessageDialog(this, "User updated successfully!");
+//                    loadDataFromDatabase();  // Refresh the table after updating the user
+                    clearForm();
+//                    userTable.clearSelection();
+                    this.initAlgos();
+                } else {
+                    JOptionPane.showMessageDialog(this, "User not found!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error updating user: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a user to edit!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void deleteUser() {
+        int selectedRow = userTable.getSelectedRow();
+        if (selectedRow != -1) {
+            userID = (int) userTable.getValueAt(selectedRow, 0);
+
+            try {
+                String sql = "DELETE FROM user WHERE id = ?";
+                PreparedStatement statement = this.connectionDB.prepareStatement(sql);
+                statement.setInt(1, userID);
+
+                int rowsAffected = statement.executeUpdate();
+                statement.close();
+
+                if (rowsAffected > 0) {
+                    JOptionPane.showMessageDialog(this, "User deleted successfully!");
+                    clearForm();
+                    this.initAlgos();
+
+                } else {
+                    JOptionPane.showMessageDialog(this, "User not found!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error deleting user: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void loadDataFromDatabase() {
+        try {
+            Statement statement = this.connectionDB.createStatement();
+            String sql = "SELECT * FROM user";
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            DefaultTableModel tableModel = (DefaultTableModel) userTable.getModel();
+            tableModel.setRowCount(0);
+            Integer tableCount = 1;
+
+            while (resultSet.next()) {
+                Object[] rowData = {
+                    resultSet.getInt("id"),
+                    resultSet.getString("username"),
+                    resultSet.getString("password"),
+                    resultSet.getBoolean("isAdmin")
+                };
+                tableModel.addRow(rowData);
+                tableCount++;
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void clearForm() {
+        this.userField.setText("");
+        this.passField.setText("");
+        this.isAdminCheckBox.setSelected(false);
+    }
+
+    private boolean isEmpty(String str) {
+        return str == null || str.trim().isEmpty();
+    }
+
+    private String getUsername() {
+        return userField.getText();
+    }
+
+    private String getPassword() {
+        return passField.getText();
+    }
+
+    private Boolean getIsAdmin() {
+        return isAdminCheckBox.isSelected();
+    }
+
+    private void initAlgos() {
+        this.updateButton.setVisible(false);
+        this.deleteButton.setVisible(false);
+        this.cancelButton.setVisible(false);
+        this.manageExamButton.setVisible(false);
+        this.backButton.setVisible(true);
+        this.clearButton.setVisible(true);
+        this.addButton.setVisible(true);
+        this.userField.setText("");
+        this.passField.setText("");
+        this.isAdminCheckBox.setSelected(false);
+//       this.manage_id = 0;
+        this.loadDataFromDatabase();
+    }
+
+    private boolean isUsernameExists(String username) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM user WHERE username = ?";
+        try (PreparedStatement statement = this.connectionDB.prepareStatement(sql)) {
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    int count = resultSet.getInt(1);
+                    return count > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+//    private String getUserID(String userID){
+//        return userID;
+//    }
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ManageUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ManageUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ManageUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ManageUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ManageUser().setVisible(true);
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(ManageUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(ManageUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(ManageUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(ManageUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new ManageUser().setVisible(true);
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JButton addButton;
+    private javax.swing.JButton backButton;
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JButton clearButton;
+    private javax.swing.JButton deleteButton;
+    private javax.swing.JCheckBox isAdminCheckBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JButton manageExamButton;
+    private javax.swing.JTextField passField;
+    private javax.swing.JButton updateButton;
+    private javax.swing.JTextField userField;
+    private javax.swing.JTable userTable;
     // End of variables declaration//GEN-END:variables
+//    private void connectToDatabase() {
+//        try{
+//            connection = DBConnection.configDB();
+//        }catch(SQLException e){
+//            e.printStackTrace();
+//        }
+//    }
 }

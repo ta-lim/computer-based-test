@@ -1,28 +1,24 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package Admin;
 
-import Models.DBConnection;
 import java.awt.HeadlessException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author mikai
+ * @author Aditya Syawal, Muhamad Talim, Mikail Asada, Rafi Fajrul
  */
 public class ManageQuestions extends javax.swing.JFrame {
     private int examId = -1;
     private int manageId = -1;
     private int[] manageAnswerId = new int[4];
+    private java.sql.Connection connectionDB;
     /**
      * Creates new form ManageQuestions
      */
-    public ManageQuestions(int examId) {
+    public ManageQuestions(int examId, java.sql.Connection connectionDB) {
+        this.connectionDB = connectionDB;
         this.examId = examId;
         initComponents();
         this.initAlgos();
@@ -370,7 +366,7 @@ public class ManageQuestions extends javax.swing.JFrame {
     }//GEN-LAST:event_poinFieldKeyTyped
 
     private void backBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backBtnMouseClicked
-        new ManageExam().setVisible(true);
+        new ManageExam(this.connectionDB).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_backBtnMouseClicked
 
@@ -392,8 +388,7 @@ public class ManageQuestions extends javax.swing.JFrame {
         
         try {
             String query = "INSERT INTO questions (exam_id, question, poin) VALUES (" + this.examId + ",'" + question + "'," + Integer.parseInt(poin) + ")";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query, java.sql.PreparedStatement.RETURN_GENERATED_KEYS);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query, java.sql.PreparedStatement.RETURN_GENERATED_KEYS);
             int affectedRows = statement.executeUpdate();
             
             if(affectedRows > 0) {
@@ -412,8 +407,7 @@ public class ManageQuestions extends javax.swing.JFrame {
         
         try {
             String query = "INSERT INTO answers (questions_id, choice, answer, isRight) VALUES (" + generatedId + ",'A','" + this.answerAfield.getText() + "'," + this.aCheckbox.isSelected() + ")";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
             statement.execute(); 
         } catch(HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -422,8 +416,7 @@ public class ManageQuestions extends javax.swing.JFrame {
         
         try {
             String query = "INSERT INTO answers (questions_id, choice, answer, isRight) VALUES (" + generatedId + ",'B','" + this.answerBfield.getText() + "'," + this.bCheckbox.isSelected() + ")";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
             statement.execute(); 
         } catch(HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -431,8 +424,7 @@ public class ManageQuestions extends javax.swing.JFrame {
         
         try {
             String query = "INSERT INTO answers (questions_id, choice, answer, isRight) VALUES (" + generatedId + ",'C','" + this.answerCfield.getText() + "'," + this.cCheckbox.isSelected() + ")";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
             statement.execute(); 
         } catch(HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -441,8 +433,7 @@ public class ManageQuestions extends javax.swing.JFrame {
         
         try {
             String query = "INSERT INTO answers (questions_id, choice, answer, isRight) VALUES (" + generatedId + ",'D','" + this.answerDfield.getText() + "'," + this.dCheckbox.isSelected() + ")";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
             statement.execute(); 
         } catch(HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -461,8 +452,7 @@ public class ManageQuestions extends javax.swing.JFrame {
         
         try {
             String query = "SELECT * FROM answers WHERE questions_id = " + this.manageId + " ORDER BY choice";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.Statement statement = Vconn.createStatement();
+            java.sql.Statement statement = this.connectionDB.createStatement();
             java.sql.ResultSet res = statement.executeQuery(query);
                
             int index = 0;
@@ -509,8 +499,7 @@ public class ManageQuestions extends javax.swing.JFrame {
     private void deleteBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteBtnMouseClicked
         try {
             String query = "DELETE FROM answers WHERE questions_id = " + this.manageId + ";";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
             statement.execute();
         } catch(HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -519,8 +508,7 @@ public class ManageQuestions extends javax.swing.JFrame {
         
         try {
             String query = "DELETE FROM questions WHERE exam_id = " + this.examId + ";";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
             statement.execute();
         } catch(HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -548,8 +536,7 @@ public class ManageQuestions extends javax.swing.JFrame {
         
         try {
             String query = "UPDATE questions SET question = '" + question + "', poin = " + poin + " WHERE id = " + this.manageId + ";";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
             statement.execute(); 
         } catch(HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -558,8 +545,7 @@ public class ManageQuestions extends javax.swing.JFrame {
         
         try {
             String query = "UPDATE answers SET answer = '" + this.answerAfield.getText() + "', isRight = " + this.aCheckbox.isSelected() + " WHERE questions_id = " + this.manageId + " AND choice = 'A';";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
             statement.execute(); 
         } catch(HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -568,8 +554,7 @@ public class ManageQuestions extends javax.swing.JFrame {
         
         try {
             String query = "UPDATE answers SET answer = '" + this.answerBfield.getText() + "', isRight = " + this.bCheckbox.isSelected() + " WHERE questions_id = " + this.manageId + " AND choice = 'B';";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
             statement.execute(); 
         } catch(HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -577,8 +562,7 @@ public class ManageQuestions extends javax.swing.JFrame {
         
         try {
             String query = "UPDATE answers SET answer = '" + this.answerCfield.getText() + "', isRight = " + this.cCheckbox.isSelected() + " WHERE questions_id = " + this.manageId + " AND choice = 'C';";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
             statement.execute(); 
         } catch(HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -587,8 +571,7 @@ public class ManageQuestions extends javax.swing.JFrame {
         
         try {
             String query = "UPDATE answers SET answer = '" + this.answerDfield.getText() + "', isRight = " + this.dCheckbox.isSelected() + " WHERE questions_id = " + this.manageId + " AND choice = 'D';";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
             statement.execute(); 
         } catch(HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -623,8 +606,7 @@ public class ManageQuestions extends javax.swing.JFrame {
        int counter = 1;
         try {
             String query = "SELECT * FROM questions WHERE exam_id = " + this.examId + " ORDER BY id";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.Statement statement = Vconn.createStatement();
+            java.sql.Statement statement = this.connectionDB.createStatement();
             java.sql.ResultSet res = statement.executeQuery(query);
             
             DefaultTableModel model = new DefaultTableModel() {
@@ -655,37 +637,37 @@ public class ManageQuestions extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ManageQuestions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ManageQuestions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ManageQuestions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ManageQuestions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ManageQuestions(1).setVisible(true);
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(ManageQuestions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(ManageQuestions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(ManageQuestions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(ManageQuestions.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new ManageQuestions(1).setVisible(true);
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox aCheckbox;

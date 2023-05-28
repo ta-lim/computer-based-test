@@ -1,14 +1,14 @@
 
 import Auth.Login;
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+import Models.DBConnection;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
- * @author mikai
+ * @author Aditya Syawal, Muhamad Talim, Mikail Asada, Rafi Fajrul
  */
 public class Main {
     public static void main(String args[]) {
@@ -40,7 +40,12 @@ public class Main {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new Login().setVisible(true);
+                try {
+                    java.sql.Connection Vconn = (Connection)DBConnection.configDB();
+                    new Login(Vconn).setVisible(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
