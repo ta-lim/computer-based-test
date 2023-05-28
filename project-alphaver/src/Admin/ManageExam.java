@@ -1,19 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package Admin;
 
-import Models.DBConnection;
 import java.awt.HeadlessException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author mikai
+ * @author Aditya Syawal, Muhamad Talim, Mikail Asada, Rafi Fajrul
  */
 public class ManageExam extends javax.swing.JFrame {
 
@@ -21,8 +15,10 @@ public class ManageExam extends javax.swing.JFrame {
      * Creates new form ManageExam
      */
     private int manage_id;
+    private java.sql.Connection connectionDB;
     
-    public ManageExam() {
+    public ManageExam(java.sql.Connection connectionDB) {
+        this.connectionDB = connectionDB;
         initComponents();
         this.initAlgos();
     }
@@ -250,7 +246,7 @@ public class ManageExam extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void backButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseClicked
-        DashboardAdmin da = new DashboardAdmin();
+        DashboardAdmin da = new DashboardAdmin(this.connectionDB);
         da.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_backButtonMouseClicked
@@ -285,8 +281,7 @@ public class ManageExam extends javax.swing.JFrame {
 
       try {
         String query = "INSERT INTO exam (title, isOpen) VALUES ('" + title + "', " + isOpen + ")";
-        java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-        java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+        java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
         statement.execute(); 
       } catch(HeadlessException | SQLException e) {
         JOptionPane.showMessageDialog(this, e.getMessage());
@@ -301,8 +296,7 @@ public class ManageExam extends javax.swing.JFrame {
         
         try {
             String query = "UPDATE exam SET title = '" + title + "', isOpen = " + isOpen + " WHERE id = " + this.manage_id;
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
             statement.execute();
         } catch(HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -314,8 +308,7 @@ public class ManageExam extends javax.swing.JFrame {
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
         try {
             String query = "DELETE FROM exam WHERE id = " + this.manage_id;
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.PreparedStatement statement = Vconn.prepareStatement(query);
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
             statement.execute();
         } catch(HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -325,13 +318,13 @@ public class ManageExam extends javax.swing.JFrame {
     }//GEN-LAST:event_deleteButtonMouseClicked
 
     private void editSoalButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editSoalButtonMouseClicked
-        ManageQuestions mq = new ManageQuestions(this.manage_id);
+        ManageQuestions mq = new ManageQuestions(this.manage_id, this.connectionDB);
         mq.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_editSoalButtonMouseClicked
 
     private void viewGradesBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_viewGradesBtnMouseClicked
-        new ViewGrades(this.manage_id).setVisible(true);
+        new ViewGrades(this.manage_id, this.connectionDB).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_viewGradesBtnMouseClicked
     
@@ -352,8 +345,7 @@ public class ManageExam extends javax.swing.JFrame {
         int counter = 1;
         try {
             String query = "SELECT * FROM exam ORDER BY id";
-            java.sql.Connection Vconn = (Connection)DBConnection.configDB();
-            java.sql.Statement statement = Vconn.createStatement();
+            java.sql.Statement statement = this.connectionDB.createStatement();
             java.sql.ResultSet res = statement.executeQuery(query);
             
             DefaultTableModel model = new DefaultTableModel() {
@@ -382,37 +374,37 @@ public class ManageExam extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ManageExam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ManageExam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ManageExam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ManageExam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ManageExam().setVisible(true);
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(ManageExam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(ManageExam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(ManageExam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(ManageExam.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new ManageExam().setVisible(true);
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton addButton;
