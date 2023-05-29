@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 public class DashboardUser extends javax.swing.JFrame {
     private java.sql.Connection connectionDB;
     private String userID;
+    private String examID;
     /**
      * Creates new form NewJFrame
      */
@@ -81,6 +82,11 @@ public class DashboardUser extends javax.swing.JFrame {
         mulaiButton.setText("mulai");
         mulaiButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         mulaiButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mulaiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mulaiButtonActionPerformed(evt);
+            }
+        });
 
         userLabel.setText("jLabel1");
 
@@ -147,6 +153,12 @@ public class DashboardUser extends javax.swing.JFrame {
         
     }//GEN-LAST:event_listExamMouseClicked
 
+    private void mulaiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mulaiButtonActionPerformed
+        // TODO add your handling code here:
+         new DoExam(this.connectionDB, Integer.parseInt(this.userID), this.examID).setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_mulaiButtonActionPerformed
+
     private void loadDataFromDatabase() {
         try {
             String sql = "SELECT * FROM exam JOIN exam_access ON exam.id = exam_id WHERE user_id = ? ORDER BY exam.id";
@@ -159,8 +171,9 @@ public class DashboardUser extends javax.swing.JFrame {
             Integer tableCount = 1;
 
             while (resultSet.next()) {
+                this.examID = resultSet.getString("id");
                 Object[] rowData = {
-                        resultSet.getInt("id"),
+                        this.examID,
                         resultSet.getString("title"),
                         isOpen(resultSet.getBoolean("isOpen"))
                         
