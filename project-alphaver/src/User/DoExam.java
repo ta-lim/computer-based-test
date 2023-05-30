@@ -15,24 +15,25 @@ public class DoExam extends javax.swing.JFrame {
     private int questionId;
     private int totalQuestions = 0;
     private int[] userAnswers;
+    private int[] ListQuestion;
 
     public DoExam(java.sql.Connection connectionDB, int userId, String examID) {
         this.connectionDB = connectionDB;
         this.userId = userId;
         this.examID = examID;
+        System.out.println(examID);
         initComponents();
         this.initAlgos();
     }
-    
+
     private void initAlgos() {
         this.btnPilihanGanda.clearSelection();
-        if(totalQuestions == 0) {
+        if (totalQuestions == 0) {
             try {
                 String sql = "SELECT * FROM questions where exam_id = ?";
                 PreparedStatement statement = this.connectionDB.prepareStatement(sql);
                 statement.setString(1, this.examID);
                 ResultSet resultSet = statement.executeQuery();
-                System.out.print(resultSet);
 
                 while (resultSet.next()) {
                     this.totalQuestions++;
@@ -44,24 +45,25 @@ public class DoExam extends javax.swing.JFrame {
                 e.printStackTrace();
                 return;
             }
-            
+
             this.userAnswers = new int[this.totalQuestions];
+            this.ListQuestion = new int[this.totalQuestions];
         }
-        
-        if(this.noQuestion == this.totalQuestions) {
+
+        if (this.noQuestion == this.totalQuestions) {
             this.btnSubmit.setVisible(true);
             this.btnNext.setVisible(false);
         } else {
             this.btnSubmit.setVisible(false);
             this.btnNext.setVisible(true);
         }
-        
-        if(this.noQuestion == 1) {
+
+        if (this.noQuestion == 1) {
             this.btnPrev.setVisible(false);
         } else {
             this.btnPrev.setVisible(true);
         }
-        
+
         this.DbSoal();
     }
 
@@ -72,15 +74,16 @@ public class DoExam extends javax.swing.JFrame {
             PreparedStatement statement = this.connectionDB.prepareStatement(sql);
             statement.setString(1, this.examID);
             ResultSet resultSet = statement.executeQuery();
-            System.out.print(resultSet);
-            
+
             while (resultSet.next()) {
-                if(counter == this.noQuestion) {
+                if (counter == this.noQuestion) {
                     this.TxtSoal.setText(resultSet.getString("question"));
+                    this.NoSoal.setText("" + this.noQuestion);
                     this.questionId = resultSet.getInt("id");
+                    this.ListQuestion[this.noQuestion - 1] = resultSet.getInt("id");
                     break;
                 }
-                
+
                 counter++;
             }
 
@@ -90,45 +93,45 @@ public class DoExam extends javax.swing.JFrame {
             e.printStackTrace();
             return;
         }
-        
+
         try {
             String sql = "SELECT * FROM answers where questions_id = ? ORDER BY choice";
             PreparedStatement statement = this.connectionDB.prepareStatement(sql);
             statement.setInt(1, this.questionId);
             ResultSet resultSet = statement.executeQuery();
-            
-            while(resultSet.next()) {
-                switch(resultSet.getString("choice")) {
+
+            while (resultSet.next()) {
+                switch (resultSet.getString("choice")) {
                     case "A":
                         this.A.setText(resultSet.getString("answer"));
-                        if(resultSet.getInt("id") == this.userAnswers[this.noQuestion - 1]) {
+                        if (resultSet.getInt("id") == this.userAnswers[this.noQuestion - 1]) {
                             this.A.setSelected(true);
                         }
                         break;
-                        
+
                     case "B":
                         this.B.setText(resultSet.getString("answer"));
-                        if(resultSet.getInt("id") == this.userAnswers[this.noQuestion - 1]) {
+                        if (resultSet.getInt("id") == this.userAnswers[this.noQuestion - 1]) {
                             this.B.setSelected(true);
                         }
                         break;
-                        
+
                     case "C":
                         this.C.setText(resultSet.getString("answer"));
-                        if(resultSet.getInt("id") == this.userAnswers[this.noQuestion - 1]) {
+                        if (resultSet.getInt("id") == this.userAnswers[this.noQuestion - 1]) {
                             this.C.setSelected(true);
                         }
                         break;
-                        
+
                     case "D":
                         this.D.setText(resultSet.getString("answer"));
-                        if(resultSet.getInt("id") == this.userAnswers[this.noQuestion - 1]) {
+                        if (resultSet.getInt("id") == this.userAnswers[this.noQuestion - 1]) {
                             this.D.setSelected(true);
                         }
                         break;
                 }
             }
-            
+
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
@@ -148,18 +151,19 @@ public class DoExam extends javax.swing.JFrame {
         } else if (D.isSelected()) {
             jwbSiswa = "D";
         }
-        
+
         try {
             String sql = "SELECT * FROM answers where questions_id = ? AND choice = ?";
             PreparedStatement statement = this.connectionDB.prepareStatement(sql);
             statement.setInt(1, this.questionId);
             statement.setString(2, jwbSiswa);
             ResultSet resultSet = statement.executeQuery();
-            
-            while(resultSet.next()) {
+
+            while (resultSet.next()) {
                 this.userAnswers[this.noQuestion - 1] = resultSet.getInt("id");
+//              
             }
-            
+
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
@@ -343,13 +347,23 @@ public class DoExam extends javax.swing.JFrame {
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
         // TODO add your handling code here:
         UpdateJawaban();
-        int countBenar = 0;
-        for (Soal soal : soal) {
-            if (soal.isJawabanBenar()) {
-                countBenar++;
+
+        for (int i = 0; i < this.totalQuestions; i++) {
+            try {
+                String sql = "INSERT INTO user_answers (user_id, exam_id, questions_id, answer_id) VALUES (" + this.userId + ","+this.examID+","+this.ListQuestion[i]+","+this.userAnswers[i]+");";
+                 java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(sql);
+                statement.execute();
+
+                System.out.println("ArrayList data successfully inserted into the database.");
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return;
             }
         }
-        JOptionPane.showMessageDialog(this, "Soal yang benar sebanyak " + countBenar, "Rangkuman", JOptionPane.INFORMATION_MESSAGE);
+        
+        new DashboardUser(this.connectionDB,Integer.toString( this.userId)).setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     /**

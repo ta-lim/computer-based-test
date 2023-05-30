@@ -15,6 +15,7 @@ public class DashboardUser extends javax.swing.JFrame {
     private java.sql.Connection connectionDB;
     private String userID;
     private String examID;
+    private String selectedExamId;
     /**
      * Creates new form NewJFrame
      */
@@ -141,9 +142,11 @@ public class DashboardUser extends javax.swing.JFrame {
 
     private void listExamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listExamMouseClicked
         int selectedRow = listExam.getSelectedRow();
+        
         if (selectedRow != -1) {
             String Status = (String) listExam.getValueAt(selectedRow, 2);
             if(Status == "Mulai"){
+                this.selectedExamId = listExam.getValueAt(selectedRow, 0).toString();
                 this.mulaiButton.setVisible(true);
             }else{
                 this.mulaiButton.setVisible(false);
@@ -155,7 +158,7 @@ public class DashboardUser extends javax.swing.JFrame {
 
     private void mulaiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mulaiButtonActionPerformed
         // TODO add your handling code here:
-         new DoExam(this.connectionDB, Integer.parseInt(this.userID), this.examID).setVisible(true);
+         new DoExam(this.connectionDB, Integer.parseInt(this.userID), this.selectedExamId).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_mulaiButtonActionPerformed
 
@@ -171,9 +174,8 @@ public class DashboardUser extends javax.swing.JFrame {
             Integer tableCount = 1;
 
             while (resultSet.next()) {
-                this.examID = resultSet.getString("id");
                 Object[] rowData = {
-                        this.examID,
+                        resultSet.getString("id"),
                         resultSet.getString("title"),
                         isOpen(resultSet.getBoolean("isOpen"))
                         
