@@ -171,6 +171,38 @@ public class DoExam extends javax.swing.JFrame {
             return;
         }
     }
+    
+    public void SubmitJawaban (){
+         for (int i = 0; i < this.totalQuestions; i++) {
+            try {
+                String sql = "INSERT INTO user_answers (user_id, exam_id, questions_id, answer_id) VALUES (" + this.userId + ","+this.examID+","+this.ListQuestion[i]+","+this.userAnswers[i]+");";
+                 java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(sql);
+                statement.execute();
+
+                System.out.println("ArrayList data successfully inserted into the database.");
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+    }
+    
+     public void DeleteExamAcces (){
+        
+            try {
+                String sql = "DELETE FROM  exam_access WHERE user_id = "+this.userId+" AND exam_id = "+this.examID+";";
+                 java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(sql);
+                statement.execute();
+
+                System.out.println("Data successfully delete from the database.");
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return;
+            }
+        
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -347,20 +379,8 @@ public class DoExam extends javax.swing.JFrame {
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
         // TODO add your handling code here:
         UpdateJawaban();
-
-        for (int i = 0; i < this.totalQuestions; i++) {
-            try {
-                String sql = "INSERT INTO user_answers (user_id, exam_id, questions_id, answer_id) VALUES (" + this.userId + ","+this.examID+","+this.ListQuestion[i]+","+this.userAnswers[i]+");";
-                 java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(sql);
-                statement.execute();
-
-                System.out.println("ArrayList data successfully inserted into the database.");
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return;
-            }
-        }
+        SubmitJawaban();
+        DeleteExamAcces ();
         
         new DashboardUser(this.connectionDB,Integer.toString( this.userId)).setVisible(true);
         this.setVisible(false);
