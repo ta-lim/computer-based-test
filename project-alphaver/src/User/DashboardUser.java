@@ -14,6 +14,8 @@ import javax.swing.table.DefaultTableModel;
 public class DashboardUser extends javax.swing.JFrame {
     private java.sql.Connection connectionDB;
     private String userID;
+    private String examID;
+    private String selectedExamId;
     /**
      * Creates new form NewJFrame
      */
@@ -81,6 +83,11 @@ public class DashboardUser extends javax.swing.JFrame {
         mulaiButton.setText("mulai");
         mulaiButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         mulaiButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        mulaiButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mulaiButtonActionPerformed(evt);
+            }
+        });
 
         userLabel.setText("jLabel1");
 
@@ -135,9 +142,11 @@ public class DashboardUser extends javax.swing.JFrame {
 
     private void listExamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listExamMouseClicked
         int selectedRow = listExam.getSelectedRow();
+        
         if (selectedRow != -1) {
             String Status = (String) listExam.getValueAt(selectedRow, 2);
             if(Status == "Mulai"){
+                this.selectedExamId = listExam.getValueAt(selectedRow, 0).toString();
                 this.mulaiButton.setVisible(true);
             }else{
                 this.mulaiButton.setVisible(false);
@@ -146,6 +155,12 @@ public class DashboardUser extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_listExamMouseClicked
+
+    private void mulaiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mulaiButtonActionPerformed
+        // TODO add your handling code here:
+         new DoExam(this.connectionDB, Integer.parseInt(this.userID), this.selectedExamId).setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_mulaiButtonActionPerformed
 
     private void loadDataFromDatabase() {
         try {
@@ -160,7 +175,7 @@ public class DashboardUser extends javax.swing.JFrame {
 
             while (resultSet.next()) {
                 Object[] rowData = {
-                        resultSet.getInt("id"),
+                        resultSet.getString("id"),
                         resultSet.getString("title"),
                         isOpen(resultSet.getBoolean("isOpen"))
                         
