@@ -15,6 +15,7 @@ public class DashboardUser extends javax.swing.JFrame {
     private java.sql.Connection connectionDB;
     private String userID;
     private String examID;
+    private String username;
     private String selectedExamId;
     /**
      * Creates new form NewJFrame
@@ -25,6 +26,14 @@ public class DashboardUser extends javax.swing.JFrame {
         initComponents();
         initAlgos();
     }
+    
+//    public DashboardUser(java.sql.Connection connectionDB, String userID) {
+//        this.userID = userID;
+//        this.connectionDB = connectionDB;
+//        this.username = this.username;
+//        initComponents();
+//        initAlgos();
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -105,7 +114,6 @@ public class DashboardUser extends javax.swing.JFrame {
         userLabel.setForeground(new java.awt.Color(100, 116, 139));
         userLabel.setText("Username");
 
-        quitButton.setBackground(new java.awt.Color(255, 255, 255));
         quitButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         quitButton.setForeground(new java.awt.Color(244, 63, 94));
         quitButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/FaSignOutAlt.png"))); // NOI18N
@@ -217,6 +225,7 @@ public class DashboardUser extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void quitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitButtonActionPerformed
@@ -249,6 +258,22 @@ public class DashboardUser extends javax.swing.JFrame {
 
     private void loadDataFromDatabase() {
         try {
+            String sql = "SELECT * FROM user where id = ?";
+            PreparedStatement statement = this.connectionDB.prepareStatement(sql);
+            statement.setString(1, this.userID);
+            ResultSet res = statement.executeQuery();
+            if (res.next()){
+            this.username = res.getString("username");
+            res.close();
+            statement.close();
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+            return;
+        }
+        
+        try {
             String sql = "SELECT * FROM exam JOIN exam_access ON exam.id = exam_id WHERE user_id = ? ORDER BY exam.id";
             PreparedStatement statement = this.connectionDB.prepareStatement(sql);
             statement.setString(1, this.userID);
@@ -257,7 +282,6 @@ public class DashboardUser extends javax.swing.JFrame {
             DefaultTableModel tableModel = (DefaultTableModel) listExam.getModel();
             tableModel.setRowCount(0);
             Integer tableCount = 1;
-
             while (resultSet.next()) {
                 Object[] rowData = {
                         resultSet.getString("id"),
@@ -279,9 +303,9 @@ public class DashboardUser extends javax.swing.JFrame {
     }
     
     private void initAlgos(){
-        this.userLabel.setText(this.userID);
-        this.mulaiButton.setVisible(false);
         loadDataFromDatabase();
+        this.userLabel.setText(this.username);
+        this.mulaiButton.setVisible(false);
 
     }
 

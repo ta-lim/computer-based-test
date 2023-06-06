@@ -61,19 +61,16 @@ public class DashboardAdmin extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(255, 255, 255));
         jButton2.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         jButton2.setForeground(new java.awt.Color(59, 130, 246));
         jButton2.setText("Manage Exam");
         jButton2.setFocusPainted(false);
-        jButton2.setOpaque(false);
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton2MouseClicked(evt);
             }
         });
 
-        jToggleButton1.setBackground(new java.awt.Color(255, 255, 255));
         jToggleButton1.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         jToggleButton1.setForeground(new java.awt.Color(244, 63, 94));
         jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/FaSignOutAlt.png"))); // NOI18N
@@ -170,12 +167,13 @@ public class DashboardAdmin extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         ManageUser mngUser = new ManageUser(this.connectionDB);
         mngUser.setVisible(true);
-        //this.setVisible(false);
+        this.setVisible(false);
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void jToggleButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MouseClicked
@@ -187,7 +185,7 @@ public class DashboardAdmin extends javax.swing.JFrame {
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
         ManageExam me = new ManageExam(this.connectionDB);
         me.setVisible(true);
-        //this.setVisible(false);
+        this.setVisible(false);
     }//GEN-LAST:event_jButton2MouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

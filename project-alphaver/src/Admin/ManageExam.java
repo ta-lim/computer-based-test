@@ -40,13 +40,13 @@ public class ManageExam extends javax.swing.JFrame {
         isOpenCheckBox = new javax.swing.JCheckBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableExam = new javax.swing.JTable();
-        addButton = new javax.swing.JToggleButton();
         updateButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         warnTextLabel = new javax.swing.JLabel();
         editSoalButton = new javax.swing.JButton();
         viewGradesBtn = new javax.swing.JButton();
+        addButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         title1 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
@@ -108,16 +108,6 @@ public class ManageExam extends javax.swing.JFrame {
             tableExam.getColumnModel().getColumn(2).setResizable(false);
         }
 
-        addButton.setBackground(new java.awt.Color(59, 130, 246));
-        addButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        addButton.setForeground(new java.awt.Color(255, 255, 255));
-        addButton.setText("Add");
-        addButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                addButtonMouseClicked(evt);
-            }
-        });
-
         updateButton.setBackground(new java.awt.Color(59, 130, 246));
         updateButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         updateButton.setForeground(new java.awt.Color(255, 255, 255));
@@ -129,7 +119,6 @@ public class ManageExam extends javax.swing.JFrame {
             }
         });
 
-        deleteButton.setBackground(new java.awt.Color(255, 255, 255));
         deleteButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         deleteButton.setForeground(new java.awt.Color(244, 63, 94));
         deleteButton.setText("Delete");
@@ -139,13 +128,7 @@ public class ManageExam extends javax.swing.JFrame {
                 deleteButtonMouseClicked(evt);
             }
         });
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
 
-        cancelButton.setBackground(new java.awt.Color(255, 255, 255));
         cancelButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         cancelButton.setForeground(new java.awt.Color(30, 41, 59));
         cancelButton.setText("Cancel");
@@ -159,7 +142,6 @@ public class ManageExam extends javax.swing.JFrame {
         warnTextLabel.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         warnTextLabel.setForeground(new java.awt.Color(255, 22, 44));
 
-        editSoalButton.setBackground(new java.awt.Color(255, 255, 255));
         editSoalButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         editSoalButton.setForeground(new java.awt.Color(59, 130, 246));
         editSoalButton.setText("Manage Question");
@@ -169,13 +151,23 @@ public class ManageExam extends javax.swing.JFrame {
             }
         });
 
-        viewGradesBtn.setBackground(new java.awt.Color(255, 255, 255));
         viewGradesBtn.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         viewGradesBtn.setForeground(new java.awt.Color(59, 130, 246));
         viewGradesBtn.setText("View Grades");
         viewGradesBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 viewGradesBtnMouseClicked(evt);
+            }
+        });
+
+        addButton.setBackground(new java.awt.Color(59, 130, 246));
+        addButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        addButton.setForeground(new java.awt.Color(255, 255, 255));
+        addButton.setText("Add");
+        addButton.setFocusPainted(false);
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
             }
         });
 
@@ -206,7 +198,7 @@ public class ManageExam extends javax.swing.JFrame {
                                             .addComponent(isOpenCheckBox)
                                             .addComponent(titleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(addButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(addButton, javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                             .addComponent(editSoalButton)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -313,6 +305,7 @@ public class ManageExam extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void tableExamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableExamMouseClicked
@@ -334,26 +327,6 @@ public class ManageExam extends javax.swing.JFrame {
         this.initAlgos();
     }//GEN-LAST:event_cancelButtonMouseClicked
 
-    private void addButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseClicked
-      String title = this.titleTextField.getText();
-      Boolean isOpen = this.isOpenCheckBox.isSelected();
-      
-      if(title.length() < 1) {
-          this.warnTextLabel.setText("Title can't be empty");
-          return;
-      }
-
-      try {
-        String query = "INSERT INTO exam (title, isOpen) VALUES ('" + title + "', " + isOpen + ")";
-        java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
-        statement.execute(); 
-      } catch(HeadlessException | SQLException e) {
-        JOptionPane.showMessageDialog(this, e.getMessage());
-      }
-
-      this.initAlgos();
-    }//GEN-LAST:event_addButtonMouseClicked
-
     private void updateButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateButtonMouseClicked
         String title = this.titleTextField.getText();
         Boolean isOpen = this.isOpenCheckBox.isSelected();
@@ -370,6 +343,15 @@ public class ManageExam extends javax.swing.JFrame {
     }//GEN-LAST:event_updateButtonMouseClicked
 
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
+        String deleteSqlExamAccess = "DELETE FROM exam_access WHERE exam_id = ?";
+           try {
+               java.sql.PreparedStatement deleteStatement = this.connectionDB.prepareStatement(deleteSqlExamAccess);
+               deleteStatement.setInt(1,this.manage_id);
+               deleteStatement.executeUpdate();
+           }
+           catch(SQLException e){
+               e.printStackTrace();
+           }
         try {
             String query = "DELETE FROM exam WHERE id = " + this.manage_id;
             java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
@@ -384,23 +366,39 @@ public class ManageExam extends javax.swing.JFrame {
     private void editSoalButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editSoalButtonMouseClicked
         ManageQuestions mq = new ManageQuestions(this.manage_id, this.connectionDB);
         mq.setVisible(true);
-        //this.setVisible(false);
+        this.setVisible(false);
     }//GEN-LAST:event_editSoalButtonMouseClicked
 
     private void viewGradesBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_viewGradesBtnMouseClicked
         new ViewGrades(this.manage_id, this.connectionDB).setVisible(true);
-        //this.setVisible(false);
+        this.setVisible(false);
     }//GEN-LAST:event_viewGradesBtnMouseClicked
 
     private void title1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_title1MouseClicked
-        //ManageUser manageUser = new ManageUser(this.connectionDB);
-        //manageUser.setVisible(true);
+        new DashboardAdmin(this.connectionDB).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_title1MouseClicked
 
-    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_deleteButtonActionPerformed
+        String title = this.titleTextField.getText();
+        Boolean isOpen = this.isOpenCheckBox.isSelected();
+
+        if(title.length() < 1) {
+            JOptionPane.showMessageDialog(this, "Title can't be empty");
+            return;
+        }
+
+        try {
+            String query = "INSERT INTO exam (title, isOpen) VALUES ('" + title + "', " + isOpen + ")";
+            java.sql.PreparedStatement statement = this.connectionDB.prepareStatement(query);
+            statement.execute();
+        } catch(HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+
+        this.initAlgos();
+    }//GEN-LAST:event_addButtonActionPerformed
     
     private void initAlgos() {
        this.updateButton.setVisible(false);
@@ -481,7 +479,7 @@ public class ManageExam extends javax.swing.JFrame {
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JToggleButton addButton;
+    private javax.swing.JButton addButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton editSoalButton;

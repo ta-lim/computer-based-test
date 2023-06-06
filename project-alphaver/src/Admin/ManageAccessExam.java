@@ -231,7 +231,7 @@ public class ManageAccessExam extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
@@ -241,6 +241,7 @@ public class ManageAccessExam extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
@@ -261,8 +262,7 @@ public class ManageAccessExam extends javax.swing.JFrame {
     }//GEN-LAST:event_examAccessTableMouseClicked
 
     private void title1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_title1MouseClicked
-        //ManageUser manageUser = new ManageUser(this.connectionDB);
-        //manageUser.setVisible(true);
+        new DashboardAdmin(this.connectionDB).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_title1MouseClicked
 

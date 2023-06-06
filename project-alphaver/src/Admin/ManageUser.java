@@ -17,7 +17,7 @@ public class ManageUser extends javax.swing.JFrame {
 //        private Connection connection;
 //        DefaultTableModel tableModel;
     private java.sql.Connection connectionDB;
-    private Integer userID;
+    private String userID;
 
     /**
      * Creates new form ManageUser
@@ -133,7 +133,6 @@ public class ManageUser extends javax.swing.JFrame {
             }
         });
 
-        clearButton.setBackground(new java.awt.Color(255, 255, 255));
         clearButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         clearButton.setForeground(new java.awt.Color(30, 41, 59));
         clearButton.setText("Clear");
@@ -153,7 +152,6 @@ public class ManageUser extends javax.swing.JFrame {
             }
         });
 
-        deleteButton.setBackground(new java.awt.Color(255, 255, 255));
         deleteButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         deleteButton.setForeground(new java.awt.Color(244, 63, 94));
         deleteButton.setText("Delete");
@@ -163,7 +161,6 @@ public class ManageUser extends javax.swing.JFrame {
             }
         });
 
-        cancelButton.setBackground(new java.awt.Color(255, 255, 255));
         cancelButton.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         cancelButton.setForeground(new java.awt.Color(30, 41, 59));
         cancelButton.setText("Cancel");
@@ -325,6 +322,7 @@ public class ManageUser extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
@@ -358,7 +356,7 @@ public class ManageUser extends javax.swing.JFrame {
 //        this.addButton.setVisible(false);
         int selectedRow = userTable.getSelectedRow();
         if (selectedRow != -1) {
-            userID = (int) userTable.getValueAt(selectedRow, 0);
+            this.userID = String.valueOf((int) userTable.getValueAt(selectedRow, 0));
             String username = (String) userTable.getValueAt(selectedRow, 1);
             String password = (String) userTable.getValueAt(selectedRow, 2);
             boolean isAdmin = (boolean) userTable.getValueAt(selectedRow, 3);
@@ -387,11 +385,12 @@ public class ManageUser extends javax.swing.JFrame {
 
     private void manageExamButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manageExamButtonActionPerformed
         new ManageAccessExam(String.valueOf(this.userID), userField.getText(), this.connectionDB).setVisible(true);
+        this.setVisible(false);
         //this.setVisible(false);
     }//GEN-LAST:event_manageExamButtonActionPerformed
 
     private void title1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_title1MouseClicked
-        //ManageUser manageUser = new ManageUser(this.connectionDB);
+        new DashboardAdmin(this.connectionDB).setVisible(true);
         //manageUser.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_title1MouseClicked
@@ -430,7 +429,7 @@ public class ManageUser extends javax.swing.JFrame {
     private void updateUser() {
         int selectedRow = userTable.getSelectedRow();
         if (selectedRow != -1) {
-            userID = (int) userTable.getValueAt(selectedRow, 0);
+            this.userID = String.valueOf((int) userTable.getValueAt(selectedRow, 0));
 
             try {
                 String sql = "UPDATE user SET username = ?, password = ?, isAdmin = ? WHERE id = ?";
@@ -438,7 +437,7 @@ public class ManageUser extends javax.swing.JFrame {
                 statement.setString(1, getUsername());
                 statement.setString(2, getPassword());
                 statement.setBoolean(3, getIsAdmin());
-                statement.setInt(4, userID);
+                statement.setString(4, this.userID);
                 int rowsAffected = statement.executeUpdate();
                 statement.close();
                 if (rowsAffected > 0) {
@@ -462,12 +461,28 @@ public class ManageUser extends javax.swing.JFrame {
     private void deleteUser() {
         int selectedRow = userTable.getSelectedRow();
         if (selectedRow != -1) {
-            userID = (int) userTable.getValueAt(selectedRow, 0);
-
+            this.userID = String.valueOf((int) userTable.getValueAt(selectedRow, 0));
+            String deleteSqlAnswer = "DELETE FROM user_answers WHERE user_id = ?";
+                try (PreparedStatement deleteStatement = this.connectionDB.prepareStatement(deleteSqlAnswer)) {
+                    deleteStatement.setString(1,this.userID);
+                    deleteStatement.executeUpdate();
+                }
+                catch(SQLException e){
+                    e.printStackTrace();
+                }
+               
+                String deleteSqlExamAccess = "DELETE FROM exam_access WHERE user_id = ?";
+                try (PreparedStatement deleteStatement = this.connectionDB.prepareStatement(deleteSqlExamAccess)) {
+                    deleteStatement.setString(1,this.userID);
+                    deleteStatement.executeUpdate();
+                }
+                catch(SQLException e){
+                    e.printStackTrace();
+                }
             try {
                 String sql = "DELETE FROM user WHERE id = ?";
                 PreparedStatement statement = this.connectionDB.prepareStatement(sql);
-                statement.setInt(1, userID);
+                statement.setString(1, this.userID);
 
                 int rowsAffected = statement.executeUpdate();
                 statement.close();
@@ -566,9 +581,7 @@ public class ManageUser extends javax.swing.JFrame {
         return false;
     }
 
-//    private String getUserID(String userID){
-//        return userID;
-//    }
+
     /**
      * @param args the command line arguments
      */

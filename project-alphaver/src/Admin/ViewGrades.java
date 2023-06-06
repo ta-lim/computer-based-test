@@ -148,11 +148,11 @@ public class ViewGrades extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void title1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_title1MouseClicked
-        //ManageUser manageUser = new ManageUser(this.connectionDB);
-        //manageUser.setVisible(true);
+        new ManageExam(this.connectionDB).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_title1MouseClicked
     

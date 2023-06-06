@@ -163,7 +163,6 @@ public class ManageQuestions extends javax.swing.JFrame {
             }
         });
 
-        deleteBtn.setBackground(new java.awt.Color(255, 255, 255));
         deleteBtn.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         deleteBtn.setForeground(new java.awt.Color(244, 63, 94));
         deleteBtn.setText("Delete");
@@ -178,7 +177,6 @@ public class ManageQuestions extends javax.swing.JFrame {
             }
         });
 
-        cancelBtn.setBackground(new java.awt.Color(255, 255, 255));
         cancelBtn.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         cancelBtn.setForeground(new java.awt.Color(30, 41, 59));
         cancelBtn.setText("Cancel");
@@ -377,6 +375,7 @@ public class ManageQuestions extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void poinFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_poinFieldKeyTyped
@@ -597,8 +596,7 @@ public class ManageQuestions extends javax.swing.JFrame {
     }//GEN-LAST:event_updateBtnMouseClicked
 
     private void title1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_title1MouseClicked
-        //ManageUser manageUser = new ManageUser(this.connectionDB);
-        //manageUser.setVisible(true);
+        new ManageExam(this.connectionDB).setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_title1MouseClicked
 
